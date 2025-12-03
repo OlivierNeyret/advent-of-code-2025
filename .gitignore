@@ -22,6 +22,7 @@ target
 
 Cargo.lock
 inputs/day1.txt
+inputs/foo.txt
 
 # Added by cargo
 
