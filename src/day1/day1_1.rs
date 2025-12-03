@@ -1,19 +1,24 @@
 use crate::day1::common::{Day1Error, RotationDirection};
 
-fn rotate(current: i32, direction: RotationDirection, offset: i32) -> i32 {
+struct Rotation {
+    pub direction: RotationDirection,
+    pub offset: i32,
+}
+
+fn rotate(current: i32, rotation: Rotation) -> i32 {
     let mut new_position = current;
-    match direction {
+    match rotation.direction {
         RotationDirection::Left => {
-            new_position -= offset;
+            new_position -= rotation.offset;
         }
         RotationDirection::Right => {
-            new_position += offset;
+            new_position += rotation.offset;
         }
     }
     new_position.rem_euclid(100)
 }
 
-fn parse_line(line: &str) -> Result<(RotationDirection, i32), Day1Error> {
+fn parse_line(line: &str) -> Result<Rotation, Day1Error> {
     let (direction_str, offset_str) = line.split_at(1);
     let offset = match offset_str.parse::<i32>() {
         Ok(value) => value,
@@ -25,16 +30,16 @@ fn parse_line(line: &str) -> Result<(RotationDirection, i32), Day1Error> {
         "R" => RotationDirection::Right,
         _ => {return Err(Day1Error::IllformedDirection) },
     };
-    Ok((direction, offset))
+    Ok(Rotation { direction, offset })
 }
 
 pub fn parse_file(input: &str) -> Result<u32, Day1Error> {
     let mut count_zero: u32 = 0;
     let mut current_pointed_value: i32 = 50;
     for line in input.lines() {
-        let (direction, offset) = parse_line(line)?;
+        let rotation = parse_line(line)?;
 
-        current_pointed_value = rotate(current_pointed_value, direction, offset);
+        current_pointed_value = rotate(current_pointed_value, rotation);
 
         if current_pointed_value == 0 {
             count_zero += 1;
