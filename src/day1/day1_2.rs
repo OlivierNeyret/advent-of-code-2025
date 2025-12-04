@@ -1,9 +1,5 @@
-use crate::day1::common::{Day1Error, RotationDirection};
-
-struct Rotation {
-    pub direction: RotationDirection,
-    pub offset: i32,
-}
+use crate::day1::common::{Day1Error, Rotation, RotationDirection};
+use std::fs;
 
 struct RotationResult {
     pub position: i32,
@@ -55,4 +51,29 @@ pub fn parse_file(input: &str) -> Result<u32, Day1Error> {
         count_zero += rotation_result.nb_zero_pointed;
     }
     Ok(count_zero)
+}
+
+pub fn solve_day1_2(path: &str) -> Result<u32, Day1Error> {
+    let file_content = match fs::read_to_string(path) {
+        Ok(content) => content,
+        Err(_) => return Err(Day1Error::FileReadingError),
+    };
+    parse_file(file_content.as_str())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn day1_2_example() {
+        // Given
+        let file_path = "inputs/day1_example.txt";
+
+        // When
+        let result = solve_day1_2(file_path);
+
+        // Then
+        assert_eq!(result, Ok(6));
+    }
 }

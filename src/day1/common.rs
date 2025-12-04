@@ -11,3 +11,8 @@ pub enum RotationDirection {
     Left,
     Right,
 }
+
+pub struct Rotation {
+    pub direction: RotationDirection,
+    pub offset: i32,
+}
