@@ -28,7 +28,7 @@ fn parse_line(line: &str) -> Result<Rotation, Day1Error> {
     let direction = match direction_str {
         "L" => RotationDirection::Left,
         "R" => RotationDirection::Right,
-        _ => {return Err(Day1Error::IllformedDirection) },
+        _ => return Err(Day1Error::IllformedDirection),
     };
     Ok(Rotation { direction, offset })
 }

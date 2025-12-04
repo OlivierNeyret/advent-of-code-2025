@@ -1,21 +1,21 @@
 mod day1;
 
-use std::fs;
 use day1::common::Day1Error;
 use day1::{day1_1, day1_2};
+use std::fs;
 
-pub fn solve_day1_1(path: &str) ->  Result<u32, Day1Error> {
+pub fn solve_day1_1(path: &str) -> Result<u32, Day1Error> {
     let file_content = match fs::read_to_string(path) {
         Ok(content) => content,
-        Err(_) => { return Err(Day1Error::FileReadingError) },
+        Err(_) => return Err(Day1Error::FileReadingError),
     };
     day1_1::parse_file(file_content.as_str())
 }
 
-pub fn solve_day1_2(path: &str) ->  Result<u32, Day1Error> {
+pub fn solve_day1_2(path: &str) -> Result<u32, Day1Error> {
     let file_content = match fs::read_to_string(path) {
         Ok(content) => content,
-        Err(_) => { return Err(Day1Error::FileReadingError) },
+        Err(_) => return Err(Day1Error::FileReadingError),
     };
     day1_2::parse_file(file_content.as_str())
 }

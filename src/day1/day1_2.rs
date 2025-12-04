@@ -20,10 +20,13 @@ fn rotate(current: i32, rotation: Rotation) -> RotationResult {
         };
         new_position = new_position.rem_euclid(100);
         if new_position == 0 {
-            nb_zeros +=1;
+            nb_zeros += 1;
         }
     }
-    RotationResult { position: new_position, nb_zero_pointed: nb_zeros }
+    RotationResult {
+        position: new_position,
+        nb_zero_pointed: nb_zeros,
+    }
 }
 
 fn parse_line(line: &str) -> Result<Rotation, Day1Error> {
@@ -36,7 +39,7 @@ fn parse_line(line: &str) -> Result<Rotation, Day1Error> {
     let direction = match direction_str {
         "L" => RotationDirection::Left,
         "R" => RotationDirection::Right,
-        _ => {return Err(Day1Error::IllformedDirection) },
+        _ => return Err(Day1Error::IllformedDirection),
     };
     Ok(Rotation { direction, offset })
 }
