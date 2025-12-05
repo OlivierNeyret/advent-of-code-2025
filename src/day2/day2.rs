@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use std::{fs, num::ParseIntError};
 
 pub enum Day2Part {
@@ -25,7 +26,18 @@ fn is_id_invalid(id: &str, part: &Day2Part) -> bool {
             left == right
         }
         Day2Part::Part2 => {
-
+            let id_len = id.chars().count();
+            for divider in 2..id_len + 1 {
+                if id
+                    .chars()
+                    .collect::<Vec<char>>()
+                    .chunks(id_len / divider)
+                    .all_equal()
+                {
+                    return true;
+                }
+            }
+            false
         }
     }
 }
