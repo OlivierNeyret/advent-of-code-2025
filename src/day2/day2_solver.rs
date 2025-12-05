@@ -1,10 +1,6 @@
+use super::DayPart;
 use itertools::Itertools;
 use std::{fs, num::ParseIntError};
-
-pub enum Day2Part {
-    Part1,
-    Part2,
-}
 
 #[derive(PartialEq, Debug)]
 pub enum Day2Error {
@@ -19,13 +15,13 @@ impl From<ParseIntError> for Day2Error {
     }
 }
 
-fn is_id_invalid(id: &str, part: &Day2Part) -> bool {
+fn is_id_invalid(id: &str, part: &DayPart) -> bool {
     match part {
-        Day2Part::Part1 => {
+        DayPart::Part1 => {
             let (left, right) = id.split_at(id.len() / 2);
             left == right
         }
-        Day2Part::Part2 => {
+        DayPart::Part2 => {
             let id_len = id.chars().count();
             for divider in 2..id_len + 1 {
                 if id
@@ -42,7 +38,7 @@ fn is_id_invalid(id: &str, part: &Day2Part) -> bool {
     }
 }
 
-fn parse_range(range: &str, part: &Day2Part) -> Result<Vec<u64>, Day2Error> {
+fn parse_range(range: &str, part: &DayPart) -> Result<Vec<u64>, Day2Error> {
     let mut invalid_ids = Vec::<u64>::new();
 
     let mut range_it = range.split('-');
@@ -64,7 +60,7 @@ fn parse_range(range: &str, part: &Day2Part) -> Result<Vec<u64>, Day2Error> {
     Ok(invalid_ids)
 }
 
-fn parse_file(input: &str, part: Day2Part) -> Result<u64, Day2Error> {
+fn parse_file(input: &str, part: DayPart) -> Result<u64, Day2Error> {
     let mut accumulator = 0;
     for range in input.split(',') {
         accumulator += parse_range(range, &part)?.iter().sum::<u64>();
@@ -72,7 +68,7 @@ fn parse_file(input: &str, part: Day2Part) -> Result<u64, Day2Error> {
     Ok(accumulator)
 }
 
-pub fn solve_day2(path: &str, part: Day2Part) -> Result<u64, Day2Error> {
+pub fn solve_day2(path: &str, part: DayPart) -> Result<u64, Day2Error> {
     let file_content = match fs::read_to_string(path) {
         Ok(content) => content,
         Err(_) => return Err(Day2Error::FileReadingError),
@@ -90,7 +86,7 @@ mod tests {
         let file_path = "inputs/day2_example.txt";
 
         // When
-        let result = solve_day2(file_path, Day2Part::Part1);
+        let result = solve_day2(file_path, DayPart::Part1);
 
         // Then
         assert_eq!(result, Ok(1227775554));
@@ -102,7 +98,7 @@ mod tests {
         let file_path = "inputs/day2_example.txt";
 
         // When
-        let result = solve_day2(file_path, Day2Part::Part2);
+        let result = solve_day2(file_path, DayPart::Part2);
 
         // Then
         assert_eq!(result, Ok(4174379265));
