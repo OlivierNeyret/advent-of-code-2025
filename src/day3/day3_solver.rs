@@ -16,7 +16,7 @@ impl From<ParseIntError> for Day3Error {
     }
 }
 
-fn parse_bank(bank: &str, _part: &DayPart) -> Result<Vec<u64>, Day3Error> {
+fn parse_bank(bank: &str) -> Result<Vec<u64>, Day3Error> {
     bank.chars()
         .collect::<Vec<char>>()
         .into_iter()
@@ -29,7 +29,7 @@ fn parse_bank(bank: &str, _part: &DayPart) -> Result<Vec<u64>, Day3Error> {
         .collect()
 }
 
-fn max_jolts_from_bank(bank: Vec<u64>, _part: &DayPart) -> Result<u64, Day3Error> {
+fn max_jolts_from_bank(bank: Vec<u64>, part: &DayPart) -> Result<u64, Day3Error> {
     let mut first_max = 0;
     let mut second_max = 0;
     let nb_batteries = bank.len();
@@ -46,8 +46,8 @@ fn max_jolts_from_bank(bank: Vec<u64>, _part: &DayPart) -> Result<u64, Day3Error
     Ok(first_max * 10 + second_max)
 }
 
-fn calculate_bank_jolts(bank: &str, _part: &DayPart) -> Result<u64, Day3Error> {
-    max_jolts_from_bank(parse_bank(bank, _part)?, _part)
+fn calculate_bank_jolts(bank: &str, part: &DayPart) -> Result<u64, Day3Error> {
+    max_jolts_from_bank(parse_bank(bank)?, part)
 }
 
 fn parse_file(input: &str, part: DayPart) -> Result<u64, Day3Error> {
@@ -72,13 +72,24 @@ mod tests {
     #[test]
     fn day3_1_example() {
         // Given
-        let file_path = "inputs/day3.txt";
-        // let file_path = "inputs/day3_example.txt";
+        let file_path = "inputs/day3_example.txt";
 
         // When
         let result = solve_day3(file_path, DayPart::Part1);
 
         // Then
         assert_eq!(result, Ok(357));
+    }
+
+    #[test]
+    fn day3_2_example() {
+        // Given
+        let file_path = "inputs/day3_example.txt";
+
+        // When
+        let result = solve_day3(file_path, DayPart::Part2);
+
+        // Then
+        assert_eq!(result, Ok(3121910778619));
     }
 }
