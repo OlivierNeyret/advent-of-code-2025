@@ -9,7 +9,7 @@ pub enum Day4Error {
     MapOutOfBound,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Tile {
     Empty,
     Roll,
@@ -27,7 +27,7 @@ impl TryFrom<char> for Tile {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Map {
     lines: Vec<Vec<Tile>>,
 }
@@ -51,6 +51,16 @@ impl Map {
             .ok_or(Day4Error::MapOutOfBound)?
             .get(col)
             .ok_or(Day4Error::MapOutOfBound)
+    }
+
+    fn empty_tile(&mut self, col: usize, line: usize) -> Result<(), Day4Error> {
+        *(self
+            .lines
+            .get_mut(line)
+            .ok_or(Day4Error::MapOutOfBound)?
+            .get_mut(col)
+            .ok_or(Day4Error::MapOutOfBound)?) = Tile::Empty;
+        Ok(())
     }
 }
 
@@ -112,27 +122,48 @@ fn is_roll_accssible(map: &Map, col: usize, line: usize) -> bool {
     adjacent_rolls < 4
 }
 
-fn count_accessible_rolls(map: &Map) -> u64 {
+fn count_accessible_rolls(map: &Map, part: DayPart) -> Result<u64, Day4Error> {
     let mut counter: u64 = 0;
-    for (idx_line, line) in map.lines.iter().enumerate() {
-        for (idx_col, tile) in line.iter().enumerate() {
-            counter += match tile {
-                Tile::Empty => 0,
-                Tile::Roll if is_roll_accssible(map, idx_col, idx_line) => 1,
-                Tile::Roll => 0,
+    let mut current_map = map.clone();
+    let mut removed_rolls = 0;
+
+    loop {
+        let mut removable_rolls = Vec::new();
+        for (idx_line, line) in current_map.lines.iter().enumerate() {
+            for (idx_col, tile) in line.iter().enumerate() {
+                removed_rolls += match tile {
+                    Tile::Empty => 0,
+                    Tile::Roll if is_roll_accssible(&current_map, idx_col, idx_line) => {
+                        removable_rolls.push((idx_col, idx_line));
+                        1
+                    }
+                    Tile::Roll => 0,
+                }
             }
         }
+        counter += removed_rolls;
+
+        match part {
+            DayPart::Part1 => break,
+            DayPart::Part2 if removed_rolls == 0 => break,
+            DayPart::Part2 => removed_rolls = 0,
+        }
+
+        for roll in removable_rolls {
+            current_map.empty_tile(roll.0, roll.1)?;
+        }
     }
-    counter
+
+    Ok(counter)
 }
 
-pub fn solve_day4(path: &str, _part: DayPart) -> Result<u64, Day4Error> {
+pub fn solve_day4(path: &str, part: DayPart) -> Result<u64, Day4Error> {
     let file_content = match fs::read_to_string(path) {
         Ok(content) => content,
         Err(_) => return Err(Day4Error::FileReadingError),
     };
     let map = Map::new(file_content.as_str())?;
-    Ok(count_accessible_rolls(&map))
+    count_accessible_rolls(&map, part)
 }
 
 #[cfg(test)]
@@ -149,5 +180,17 @@ mod tests {
 
         // Then
         assert_eq!(result, Ok(13));
+    }
+
+    #[test]
+    fn day4_2_example() {
+        // Given
+        let file_path = "inputs/day4_example.txt";
+
+        // When
+        let result = solve_day4(file_path, DayPart::Part2);
+
+        // Then
+        assert_eq!(result, Ok(43));
     }
 }
