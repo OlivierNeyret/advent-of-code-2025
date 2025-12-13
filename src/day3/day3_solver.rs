@@ -94,8 +94,7 @@ mod tests {
     #[test]
     fn day3_1_example() {
         // Given
-        let file_path = "inputs/day3.txt";
-        // let file_path = "inputs/day3_example.txt";
+        let file_path = "inputs/day3_example.txt";
 
         // When
         let result = solve_day3(file_path, DayPart::Part1);
@@ -107,8 +106,7 @@ mod tests {
     #[test]
     fn day3_2_example() {
         // Given
-        let file_path = "inputs/day3.txt";
-        // let file_path = "inputs/day3_example.txt";
+        let file_path = "inputs/day3_example.txt";
 
         // When
         let result = solve_day3(file_path, DayPart::Part2);
