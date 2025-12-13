@@ -29,21 +29,43 @@ fn parse_bank(bank: &str) -> Result<Vec<u64>, Day3Error> {
         .collect()
 }
 
+fn convert_to_jolts(batteries: Vec<u64>) -> u64 {
+    let mut result: u64 = 0;
+    for (idx, value) in batteries.into_iter().rev().enumerate() {
+        result += value * (10_u64.pow(idx as u32));
+    }
+    result
+}
+
 fn max_jolts_from_bank(bank: Vec<u64>, part: &DayPart) -> Result<u64, Day3Error> {
-    let mut first_max = 0;
-    let mut second_max = 0;
+    let nb_batteries_to_pick = match part {
+        DayPart::Part1 => 2,
+        DayPart::Part2 => 12,
+    };
+
+    let mut selected_batteries = Vec::new();
     let nb_batteries = bank.len();
-    for (idx, jolt) in bank.into_iter().enumerate() {
-        if jolt > second_max {
-            second_max = jolt;
-            if second_max > first_max && idx < nb_batteries - 1 {
-                first_max = second_max;
-                second_max = 0;
+    let mut start_idx: usize = 0;
+
+    for i in 0..nb_batteries_to_pick {
+        let mut current_max: u64 = 0;
+        let mut current_max_idx: usize = 0;
+        for (idx, jolt) in bank
+            .iter()
+            .skip(start_idx)
+            .take((nb_batteries - start_idx) - (nb_batteries_to_pick - i - 1))
+            .enumerate()
+        {
+            if *jolt > current_max {
+                current_max = *jolt;
+                current_max_idx = idx + start_idx;
             }
         }
+        selected_batteries.push(current_max);
+        start_idx = current_max_idx + 1;
     }
 
-    Ok(first_max * 10 + second_max)
+    Ok(convert_to_jolts(selected_batteries))
 }
 
 fn calculate_bank_jolts(bank: &str, part: &DayPart) -> Result<u64, Day3Error> {
@@ -72,7 +94,8 @@ mod tests {
     #[test]
     fn day3_1_example() {
         // Given
-        let file_path = "inputs/day3_example.txt";
+        let file_path = "inputs/day3.txt";
+        // let file_path = "inputs/day3_example.txt";
 
         // When
         let result = solve_day3(file_path, DayPart::Part1);
@@ -84,7 +107,8 @@ mod tests {
     #[test]
     fn day3_2_example() {
         // Given
-        let file_path = "inputs/day3_example.txt";
+        let file_path = "inputs/day3.txt";
+        // let file_path = "inputs/day3_example.txt";
 
         // When
         let result = solve_day3(file_path, DayPart::Part2);
